@@ -1,0 +1,4 @@
+[core]
+    remote = yaremote
+['remote "yaremote"']
+    url = s3://dantists
