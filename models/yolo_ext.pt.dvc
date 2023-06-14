@@ -1,0 +1,5 @@
+outs:
+- md5: 4ce132d1f2d6d4999834482410190c4d
+  size: 6219950
+  hash: md5
+  path: yolo_ext.pt
