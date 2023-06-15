@@ -1,0 +1,12 @@
+stages:
+  parse_raw_1:
+    cmd: python src/prep/generic.py from_raw -d data/raw -o data/detection annotations1.xml
+    deps:
+      - src/prep/generic.py
+      - data/raw
+
+  parse_raw_2:
+    cmd: python src/prep/generic.py from_raw -d data/raw -o data/detection annotations2.xml
+    deps:
+      - src/prep/generic.py
+      - data/raw

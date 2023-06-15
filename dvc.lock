@@ -1,0 +1,38 @@
+schema: '2.0'
+stages:
+  parse_raw:
+    cmd: python src/prep/generic.py from_raw -d data/raw -o data/detection annotations1.xml
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: a4c6741213fe3024c53b7aea0063230e.dir
+      size: 48035887
+      nfiles: 139
+    - path: src/prep/generic.py
+      hash: md5
+      md5: 54180a795d136c7e6570fc1b4735818a
+      size: 6407
+  parse_raw_2:
+    cmd: python src/prep/generic.py from_raw -d data/raw -o data/detection annotations2.xml
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: a4c6741213fe3024c53b7aea0063230e.dir
+      size: 48035887
+      nfiles: 139
+    - path: src/prep/generic.py
+      hash: md5
+      md5: 4c3ad159cc89c63077b7eb5ea5c99a9c
+      size: 7380
+  parse_raw_1:
+    cmd: python src/prep/generic.py from_raw -d data/raw -o data/detection annotations1.xml
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: a4c6741213fe3024c53b7aea0063230e.dir
+      size: 48035887
+      nfiles: 139
+    - path: src/prep/generic.py
+      hash: md5
+      md5: 4c3ad159cc89c63077b7eb5ea5c99a9c
+      size: 7380
