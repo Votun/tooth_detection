@@ -1,11 +1,10 @@
-import os
 from os.path import join
-
 import pandas as pd
+import torch
 from torch import Tensor
 import matplotlib.pyplot as plt
 from ultralytics import YOLO
-
+import numpy as np
 def filter_boxes(data: pd.DataFrame):
     """"
     Фильтруем дублирующие боксы
@@ -21,7 +20,6 @@ def filter_boxes(data: pd.DataFrame):
                     data.loc[i, 4] = 0
     data.drop(data[data[4] == 0].index, inplace=True)
     return data
-
 
 
 def get_iou(box_a, box_b):
@@ -55,25 +53,34 @@ def plot_with_boxes(root_path, prediction, img, mode="show"):
         :param jaw_df:
         :return:
         """
-    plt.imshow(prediction.plot())
+    res = prediction.plot(show_conf=False)
+    plt.imshow(res)
     if mode == "show":
         plt.show()
     else:
         plt.savefig(join(root_path, "runs", "images", img))
 
+
 def inference(root_path, img, yolo_m_path):
     """Рисуем по готовой модели"""
     model = YOLO(join(root_path, yolo_m_path))
-    if type(img) == str:
-        img = join(root_path, "data", "detection", "images",img)
     img_predict = model(img, verbose=False)[0]
     # фильтруем дублирующие боксы
     data = pd.DataFrame(img_predict.boxes.data.numpy())
     img_predict.boxes.data = Tensor(filter_boxes(data).to_numpy())
     return img_predict
     # рисуем
-    #plot_with_boxes(root_path, img_predict, img, mode="save")
 
+def plot_on_your_own(orig_img: np.array, boxes: torch.Tensor, label_names: dict):
+    """
+    Здесь расписано содержимое yolo.predict.
+    На этой основе нужно отрисовать картинку с возможностью интерактива
+    исовать надо с помощью plotly
+    """
 
 if __name__ == "__main__":
-    inference("../../", '6.png', 'models/yolo_ext.pt')
+    root_path = "../../"
+    img = join(root_path, "data", "detection", "images", '6.png')
+    res = inference("../../", img, 'models/yolo_ext.pt')
+    plot_with_boxes(root_path, res, img, mode="show")
+    plot_on_your_own(res.orig_img, res.boxes.data, res.names)

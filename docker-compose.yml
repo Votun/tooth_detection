@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  tooth-service:
+    container_name: tooth-service
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - "8050:8050"
+    command: python ./src/web/app.py

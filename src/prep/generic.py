@@ -39,7 +39,7 @@ def run():
 @run.command('from_raw')
 @click.option('-d', '--datapath', default='raw', help="Path to data folder.")
 @click.argument('ann_file')
-@click.option('-o', '--output', default='detection')
+@click.option('-o', '--output', default='detection)
 def from_raw(datapath: str, ann_file: str, output: str):
     """
     копирует изображения из папки raw в папку detection/images,
@@ -82,7 +82,7 @@ def from_raw(datapath: str, ann_file: str, output: str):
 @run.command('from_ext')
 @click.option('-d', '--datapath', default='', help="Path to data folder.")
 @click.option('--ann_file', default='coco_annotations.json', help="Specify name of annotation file.")
-@click.option('-o', '--output', default='detection')
+@click.option('-o', '--output', default='detection)
 def from_ext(datapath, ann_file, output):
     """
     in external are: images folder and some annot.json
