@@ -42,35 +42,29 @@ styles = {
         "top": "2%",
         "left": "2%",
         "right": "2rem",
-        "height": "30%",
+        "height": "20%",
         "width": "96%",
         "padding": "5 rem 5 rem",
         "background-color": "#353535",
         "color": "white",
-        "textAlign": "center"
+        "textAlign": "center",
+        "border": "2px solid #fafafa"
     },
     "workzone": {
         "position": "relative",
         "top": "5%",
         "left": "2%",
-        "height": "60%",
+        "height": "70%",
         "width": "96%",
-        "display": "flex",
-        "align-items": "flex-start",
-        "flex-direction": "row",
-        "justify-content": "space-evenly",
-        "align-content": "center",
-        "flex-wrap": "wrap",
         "background-color": "#353535",
         "color": "#fafafa"
     },
     "graph": {
         "position": "relative",
-        "left": "0%",
-        "top": "0%",
-        "width": "60%",
-        "height": "90%",
-        "bottom": "5%",
+        "left": "1px",
+        "width": "99.5%",
+        "height": "60%",
+        "bottom": "20%",
         "border": "2px solid #fafafa",
         "background-color": "#454545",
         "display": "inline-block"
@@ -79,8 +73,8 @@ styles = {
         "position": "relative",
         "left": "0%",
         "top": "0%",
-        "width": "20%",
-        "height": "90%",
+        "width": "100%",
+        "height": "60%",
         "border": "2px solid #fafafa",
         "background-color": "#454545",
         "text-indent": "5%",
@@ -92,65 +86,51 @@ header = html.Div(
     [
         html.H1(children='DentalVision', className='header-title'),
         html.P(children='A demo interface for object detection on dental screens', className='header-description'),
-        html.Div([
-            dcc.Dropdown(
-                id='drop-menu',
-                options=[
-                    {'label': 'Исходное', 'value': 'raw'},
-                    {'label': 'Детекция', 'value': 'detect'},
-                    {'label': 'Сегментация', 'value': 'segment'}
-                ],
-                value='cut', className="dropdown", style={"color": "#696969"}
-            )], style={"position": "relative", "width": "50%", "display": "inline-block"}),
-        dcc.Upload(
-            id='upload-img',
-            children=html.Div([
-                'Drag and Drop or ',
-                html.A('Select Files')
-            ]), style={"border": "1px dashed darkgray", "margin": "15px", "height": "50%", "width": "75%",
-                       "display": "inline-block"}),
     ], className='header', style=styles["header"])
-
-sidebar = html.Div(
-    [
-        html.H2("Sidebar"),
-        dbc.Nav(
-            [
-                dbc.NavItem(dbc.NavLink("Page 1", href="/page-1", id="page-1-link"),
-                            style={"background-color": "grey"}),
-                dbc.NavItem(dbc.NavLink("Home ", href="/", active="exact")),
-                dbc.NavItem(dbc.NavLink("Page-1", href="/page-1", active="exact")),
-                dbc.NavItem(dbc.NavLink("Page-2", href="/page-2", active="exact")),
-            ], pills=True, )
-    ], style=styles["sidebar"])
 
 gr_options = html.Div(
             [
                 dcc.Checklist(id="graph-options",
                               options=["Labels", "Probabilities"],
                               value=["Labels", "Probabilities"]),
-                html.Div(["Label size", dcc.Slider(
-                    1, 10, value=1, id='font-size')]),
                 html.Div(["Line size", dcc.Slider(
-                    1, 10, step=1, value=1, id='line-width')]),
+                    1, 5, step=1, value=1, id='line-width')]),
             ], style=styles["graph_options"])
+
+sidebar = html.Div(
+    [
+        html.H2("Sidebar"),
+        dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Home", href="", id="page-1-link")),
+                dbc.NavItem(dbc.NavLink("Readme", href="/", active="exact")),
+            ], pills=True),
+        gr_options
+    ], style=styles["sidebar"])
+
 
 workzone = html.Div(
     [
-        dcc.Graph(id='output-graph', style=styles["graph"]),
-        gr_options
+        dcc.Tabs(id="tabs-graph", children=[
+            dcc.Tab(label='Raw', id='raw-img'),
+            dcc.Tab(label='Teeth Detection', id='detect'),
+        ], colors={ "border": '#454545', "primary": '#676767', "background": '#898989',}),
+        html.Div(id="output-graph", children=dcc.Upload(
+            id='upload-img',
+            children=html.Div([
+                'Drag and Drop or ',
+                html.A('Select Files')
+            ]), style=styles["graph"]),)
     ], style=styles["workzone"])
 
 app.layout = html.Div([sidebar, html.Div([header, workzone], style=styles["main"])])
 
 
-@callback(Output(component_id="output-graph", component_property="figure"),
+@callback(Output(component_id="detect", component_property="children"),
           Input(component_id="upload-img", component_property='contents'),
-          Input(component_id="drop-menu", component_property='value'),
           Input(component_id="graph-options", component_property='value'),
-          Input(component_id="font-size", component_property='value'),
           Input(component_id="line-width", component_property='value'))
-def process_img(contents, value, opt_values, font_size, line_width):
+def process_img(contents, value, opt_values, line_width):
     if contents is None:
         raise PreventUpdate
     cont = contents.replace("data:image/png;base64,", "")
@@ -160,14 +140,14 @@ def process_img(contents, value, opt_values, font_size, line_width):
     if value == "raw":
         fig = px.imshow(img)
     elif value == "detect":
-        predict = inference("../", img, 'models/yolo_ext.pt')
+        predict = inference("./", img, 'models/yolo_ext.pt')
         labels = ("Labels" in opt_values)
         probs = ("Probabilities" in opt_values)
-        fig = px.imshow(predict.plot(labels=labels, conf=probs, font_size=font_size, line_width=line_width))
+        fig = px.imshow(predict.plot(labels=labels, conf=probs, line_width=line_width))
     elif value == "cut":
         fig = px.imshow(img)
     fig.update_layout(xaxis={'visible': False}, yaxis={'visible': False}, paper_bgcolor="#454545")
-    return fig
+    return [dcc.Graph(figure=fig, style=styles["graph"])]
 
 
 if __name__ == '__main__':
