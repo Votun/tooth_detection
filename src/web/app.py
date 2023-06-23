@@ -1,20 +1,28 @@
 import base64
 import io
+import json
 import os
+
+import dash
+import plotly.graph_objects as go
 
 from dash.exceptions import PreventUpdate
 
 from dash import Dash, dcc, html, Input, Output, callback, State
 import dash_bootstrap_components as dbc
 import plotly.express as px
+import torchvision.transforms as transforms
+import torch.nn.functional as F
 
 from PIL import Image
-from src.inference.inf_yolo import inference
 
+from src.inference import inf_segment
+from src.inference.inf_yolo import inference
+from src.web.callbacks import get_callbacks
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = Dash(__name__, external_stylesheets=external_stylesheets)
-
+app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
+get_callbacks(app)
 styles = {
     "sidebar": {
         "position": "fixed",
@@ -22,12 +30,16 @@ styles = {
         "left": 0,
         "bottom": 0,
         "height": "100%",
-        "width": "10%",
-        "padding": "2% 1%",
+        "width": "12%",
+        "padding": "2% 2%",
         "background-color": "#252525",
         "color": "white",
-        "border": "1px solid blue",
-        "textAlign": "center"
+        "border": "1px solid white",
+        "textAlign": "center",
+        "display": "flex",
+        "flex-direction": "column",
+        "justify-content": "space-evenly",
+        "align-items": "center"
     },
     "main": {
         "position": "fixed",
@@ -58,6 +70,14 @@ styles = {
         "width": "96%",
         "background-color": "#353535",
         "color": "#fafafa"
+    },
+    "tabs":{ "border": "#454545", "primary": "#676767", "background": "#898989"},
+    "upload_field":{
+        "border": "1px dashed darkgray",
+        "margin": "2.5%",
+        "height": "350px",
+        "width": "95%",
+        "display": "flex", "align-items": "center", "justify-content": "space-around"
     },
     "graph": {
         "position": "relative",
@@ -102,53 +122,32 @@ sidebar = html.Div(
         html.H2("Sidebar"),
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink("Home", href="", id="page-1-link")),
-                dbc.NavItem(dbc.NavLink("Readme", href="/", active="exact")),
-            ], pills=True),
+                #dbc.NavItem(dbc.NavLink("Home", href="", id="page-1-link")),
+                dbc.NavItem(dbc.NavLink("Readme", href="https://github.com/Votun/tooth_detection#readme", active="exact"))
+            ],  pills=True),
         gr_options
     ], style=styles["sidebar"])
 
+upload_field = dcc.Upload(
+    id='upload-img',
+    children=html.Div([
+        'Drag and Drop or ',
+        html.A('Select Files')
+    ]), style=styles["upload_field"])
 
-workzone = html.Div(
+body = html.Div(
     [
-        dcc.Tabs(id="tabs-graph", children=[
-            dcc.Tab(label='Raw', id='raw-img'),
-            dcc.Tab(label='Teeth Detection', id='detect'),
-        ], colors={ "border": '#454545', "primary": '#676767', "background": '#898989',}),
-        html.Div(id="output-graph", children=dcc.Upload(
-            id='upload-img',
-            children=html.Div([
-                'Drag and Drop or ',
-                html.A('Select Files')
-            ]), style=styles["graph"]),)
+        dcc.Tabs(id="tabs-graph", value="raw-img", children=[
+            dcc.Tab(label='New', id='new', value="new"),
+            dcc.Tab(label='Raw', id='raw-img', value="raw-img"),
+            dcc.Tab(label='Teeth Detection', id='detect', value="detect"),
+            dcc.Tab(label='Caries Segmentation', id='segment', value="segment"),
+        ], colors=styles["tabs"]),
+        html.Div(id="output-graph", children=upload_field)
     ], style=styles["workzone"])
 
-app.layout = html.Div([sidebar, html.Div([header, workzone], style=styles["main"])])
 
-
-@callback(Output(component_id="detect", component_property="children"),
-          Input(component_id="upload-img", component_property='contents'),
-          Input(component_id="graph-options", component_property='value'),
-          Input(component_id="line-width", component_property='value'))
-def process_img(contents, value, opt_values, line_width):
-    if contents is None:
-        raise PreventUpdate
-    cont = contents.replace("data:image/png;base64,", "")
-    msg = base64.b64decode(cont)
-    buf = io.BytesIO(msg)
-    img = Image.open(buf).convert('RGB')
-    if value == "raw":
-        fig = px.imshow(img)
-    elif value == "detect":
-        predict = inference("./", img, 'models/yolo_ext.pt')
-        labels = ("Labels" in opt_values)
-        probs = ("Probabilities" in opt_values)
-        fig = px.imshow(predict.plot(labels=labels, conf=probs, line_width=line_width))
-    elif value == "cut":
-        fig = px.imshow(img)
-    fig.update_layout(xaxis={'visible': False}, yaxis={'visible': False}, paper_bgcolor="#454545")
-    return [dcc.Graph(figure=fig, style=styles["graph"])]
-
+app.layout = html.Div([sidebar, html.Div([header, body], style=styles["main"])])
 
 if __name__ == '__main__':
     app.run_server(debug=True, host="0.0.0.0")

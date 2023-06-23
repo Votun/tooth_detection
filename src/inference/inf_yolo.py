@@ -71,16 +71,9 @@ def inference(root_path, img, yolo_m_path):
     return img_predict
     # рисуем
 
-def plot_on_your_own(orig_img: np.array, boxes: torch.Tensor, label_names: dict):
-    """
-    Здесь расписано содержимое yolo.predict.
-    На этой основе нужно отрисовать картинку с возможностью интерактива
-    исовать надо с помощью plotly
-    """
 
 if __name__ == "__main__":
     root_path = "../../"
     img = join(root_path, "data", "detection", "images", '6.png')
     res = inference("../../", img, 'models/yolo_ext.pt')
     plot_with_boxes(root_path, res, img, mode="show")
-    plot_on_your_own(res.orig_img, res.boxes.data, res.names)
