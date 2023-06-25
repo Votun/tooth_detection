@@ -25,7 +25,7 @@
 - создание минимального интерфейса, позволяющего обрабатывать снимки.
 - Отоборажение статистики по модели.
 ## Данные.
-Отправной точкой стал размеченный вручную сет из 200 снимков. Разметка проводилась в vast.ai, после чего файлы разметки парсились для работы в различных моделях. Затем был найден более обширный сет [Tufts Dental Database](http://tdd.ece.tufts.edu/). Для сегментации поражений зубов были привлечен небольшой набор данных из открытого репозитория [Panoramic-Caries-Segmentation](https://github.com/Zzz512/MLUA) по статье [Multi-level uncertainty aware learning for semi-supervised dental panoramic caries segmentation](https://www.sciencedirect.com/science/article/abs/pii/S0925231223003193?via%3Dihub)
+Отправной точкой стал размеченный вручную сет из 200 снимков. Разметка проводилась в vast.ai, после чего файлы разметки парсились для работы в различных моделях. Затем был найден более обширный сет [Tufts Dental Database](http://tdd.ece.tufts.edu/). Для сегментации поражений зубов были привлечен небольшой набор данных из открытого репозитория [Panoramic-Caries-Segmentation](https://github.com/Zzz512/MLUA) по статье [Multi-level uncertainty aware learning for semi-supervised dental panoramic caries segmentation](https://www.sciencedirect.com/science/article/abs/pii/S0925231223003193?via%3Dihub).
 
 ## Материалы по теме
 |Date|The First and Last Authors|Title|Code|Reference
