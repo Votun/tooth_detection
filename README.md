@@ -2,8 +2,6 @@
 
 Развёрнутый проект доступен по адресу http://90.156.209.15:8050
 
-Github Pages
-
 ### Стек технологий 
 
 ![](https://img.shields.io/badge/Python-3.10-black?style=flat&logo=python) 
