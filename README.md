@@ -4,14 +4,14 @@
 
 ### Стек технологий 
 
-![](https://img.shields.io/badge/Python-3.10-black?style=flat&logo=python) 
-![](https://img.shields.io/badge/Pandas-2.0.2-black?style=flat&logo=pandas)
-![](https://img.shields.io/badge/MLflow-2.4.1-black?style=flat&logo=mlflow)
-![](https://img.shields.io/badge/Flask-2.2.5-black?style=flat&logo=flask)
-![](https://img.shields.io/badge/Docker-black?style=flat&logo=docker)
-![](https://img.shields.io/badge/PyTorch-2.0.1-black?style=flat&logo=pytorch)
-![](https://img.shields.io/badge/ultralytics-8.0.119-black?style=flat&logo=ultralytics)
-![](https://img.shields.io/badge/dvc-3.0-black?style=flat&logo=dvc)
+![](https://img.shields.io/badge/Python-3.10-black?style=for-the-badge&logo=python) 
+![](https://img.shields.io/badge/Pandas-2.0.2-black?style=for-the-badge&logo=pandas)
+![](https://img.shields.io/badge/MLflow-2.4.1-black?style=for-the-badge&logo=mlflow)
+![](https://img.shields.io/badge/Flask-2.2.5-black?style=for-the-badge&logo=flask)
+![](https://img.shields.io/badge/Docker-black?style=for-the-badge&logo=docker)
+![](https://img.shields.io/badge/PyTorch-2.0.1-black?style=for-the-badge&logo=pytorch)
+![](https://img.shields.io/badge/ultralytics-8.0.119-black?style=for-the-badge&logo=ultralytics)
+![](https://img.shields.io/badge/dvc-3.0-black?style=for-the-badge&logo=dvc)
 
 # Платформа для сегментации зубов на панорамных снимках челлюсти
 Идея:
